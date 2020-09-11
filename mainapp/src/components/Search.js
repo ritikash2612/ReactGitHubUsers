@@ -1,44 +1,47 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 import Proptypes from 'prop-types';
 
-export class Search extends Component {
+const Search = ({ searchUsers, clearUsers, reloadUsersList, setAlert}) =>  {
 
-  state = {
-    text : ''
-  }
-
+  const [text, setText] = useState(''); 
   
-  onChange = (e) => {
-    this.setState({[e.target.name] : e.target.value})
+  const onChange = (e) => {
+    setText(e.target.value)
     // console.log(e.target.value)
   }
 
-  static propTypes = {
-    searchUsers : Proptypes.func.isRequired
-  }
-  onSubmit = (e) => {
+  
+  const onSubmit = (e) => {
     e.preventDefault();
-    // console.log(this.state.text)
-    this.props.searchUsers(this.state.text)
-    this.setState({text :''})
+    if(text === ''){
+      setAlert('Please enter some text.', 'light')
+    }
+    else{
+      // console.log(this.state.text)
+      searchUsers(text)
+      setText('')
+    }
   }
-  render() {
-    return (
-      <div>
-          <form  onSubmit = {this.onSubmit} style = {{ marginTop: '0px', marginLeft: '0px', marginRight : '0px', gridGap: '1rem'}}>
 
-            <input className="form-control" type="text" name = "text" placeholder="Search users..." aria-label="Search"
-            value = {this.state.text} onChange= {this.onChange}/>
-            <input type ="submit"  value = "Search" className = "btn btn-dark btn-block"/> 
+  return (
+    <div>
+        <form  onSubmit = {onSubmit} style = {{ marginTop: '20px', marginLeft: '0px', marginRight : '0px', gridGap: '1rem'}}>
 
-          </form>
-          <button className= "btn btn-light btn-block"  onClick= {this.props.clearUsers}>Clear</button>
-          <button className= "btn btn-dark btn-block"  onClick= {this.props.reloadUsersList}>Reload List</button>
+          <input className="form-control" type="text" name = "text" placeholder="Search users..." aria-label="Search"
+          value = {text} onChange= {onChange}/>
+          <input type ="submit"  value = "Search" className = "btn btn-dark btn-block"/> 
 
-        </div>
+        </form>
+        <button className= "btn btn-light btn-block"  onClick= {clearUsers}>Clear</button>
+        <button className= "btn btn-dark btn-block"  onClick= {reloadUsersList}>Reload List</button>
+
+      </div>
     )
   }
-}
 
+Search.propTypes = {
+  searchUsers : Proptypes.func.isRequired,
+  setAlert :  Proptypes.func.isRequired,
+}
 
 export default Search
